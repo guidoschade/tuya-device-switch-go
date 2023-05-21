@@ -27,6 +27,7 @@ var clientId = ""
 var secret = ""
 var mode = ""
 
+// response structure
 type TokenResponse struct {
 	Result struct {
 		AccessToken  string `json:"access_token"`
@@ -42,7 +43,7 @@ type TokenResponse struct {
 func main() {
 
 	if len(os.Args[1:]) < 1 {
-		print("Error, required command line arguments - use '-h' for more information\n")
+		print("Error, requires command line arguments - use '-h' for more information\n")
 		os.Exit(1)
 	}
 
@@ -127,6 +128,7 @@ func GetDevice(deviceId string) {
 	log.Println(string(bs))
 }
 
+// creating request header
 func buildHeader(req *http.Request, body []byte) {
 	req.Header.Set("client_id", clientId)
 	req.Header.Set("sign_method", "HMAC-SHA256")
@@ -142,6 +144,7 @@ func buildHeader(req *http.Request, body []byte) {
 	req.Header.Set("sign", sign)
 }
 
+// creating request signature
 func buildSign(req *http.Request, body []byte, t string) string {
 	headers := getHeaderStr(req)
 	urlStr := getUrlStr(req)
@@ -152,12 +155,14 @@ func buildSign(req *http.Request, body []byte, t string) string {
 	return sign
 }
 
+// sha256 hash
 func Sha256(data []byte) string {
 	sha256Contain := sha256.New()
 	sha256Contain.Write(data)
 	return hex.EncodeToString(sha256Contain.Sum(nil))
 }
 
+// building URL
 func getUrlStr(req *http.Request) string {
 	url := req.URL.Path
 	keys := make([]string, 0, 10)
@@ -181,6 +186,7 @@ func getUrlStr(req *http.Request) string {
 	return url
 }
 
+// buiding header
 func getHeaderStr(req *http.Request) string {
 	signHeaderKeys := req.Header.Get("Signature-Headers")
 	if signHeaderKeys == "" {
@@ -194,6 +200,7 @@ func getHeaderStr(req *http.Request) string {
 	return headers
 }
 
+// HMAC
 func HmacSha256(message string, secret string) string {
 	key := []byte(secret)
 	h := hmac.New(sha256.New, key)
