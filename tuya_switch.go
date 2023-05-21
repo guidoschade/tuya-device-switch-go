@@ -25,6 +25,7 @@ var value_var = ""
 var host = ""
 var clientId = ""
 var secret = ""
+var mode = ""
 
 type TokenResponse struct {
 	Result struct {
@@ -52,13 +53,18 @@ func main() {
 	flag.StringVar(&host, "H", "https://openapi.tuyaeu.com", "Host")
 	flag.StringVar(&clientId, "i", "x", "ClientID - Tuya Client ID")
 	flag.StringVar(&secret, "s", "x", "Secret - Tuya Client Secret")
+	flag.StringVar(&mode, "m", "set", "mode - view (info) / set")
 	flag.Parse()
 
 	// getting token
 	GetToken()
 
-	// sending switch command
-	SendCommand(device_id)
+	// show device status or switch / send command
+        if mode == "view" {
+	  GetDevice(device_id)
+        } else {
+	  SendCommand(device_id)
+	}
 }
 
 // getting token from Tuya
